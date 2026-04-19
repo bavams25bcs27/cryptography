@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Diffie Hellman</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f3f4f6;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:10px;
+width:420px;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+input{
+width:100%;
+padding:10px;
+margin:8px 0;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#16a34a;
+color:white;
+border:none;
+cursor:pointer;
+}
+
+pre{
+background:black;
+color:#00ff9d;
+padding:15px;
+margin-top:10px;
+white-space:pre-wrap;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Diffie-Hellman Key Exchange</h2>
+
+<input type="number" id="q" placeholder="Prime number q">
+
+<input type="number" id="xa" placeholder="Private key XA">
+
+<input type="number" id="xb" placeholder="Private key XB">
+
+<button onclick="runDH()">Generate Shared Key</button>
+
+<pre id="output">Result will appear here...</pre>
+
+</div>
+
+<script>
+
+async function runDH(){
+
+const q = parseInt(document.getElementById("q").value);
+const xa = parseInt(document.getElementById("xa").value);
+const xb = parseInt(document.getElementById("xb").value);
+
+if(!q || !xa || !xb){
+alert("Enter all values");
+return;
+}
+
+const response = await fetch("/dh",{
+method:"POST",
+headers:{ "Content-Type":"application/json"},
+body:JSON.stringify({ q, xa, xb })
+});
+
+const text = await response.text();
+
+document.getElementById("output").innerText = text;
+
+}
+
+</script>
+
+</body>
+</html>
