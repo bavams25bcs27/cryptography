@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MD5 Generator</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f4f6f9;
+    text-align: center;
+    padding: 30px;
+}
+
+.container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    margin: auto;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    background: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.result {
+    margin-top: 20px;
+    word-wrap: break-word;
+    color: green;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>MD5 Hash Generator</h2>
+
+    <input type="text" id="textInput" placeholder="Enter text">
+    <br>
+    <button onclick="generateMD5()">Generate MD5</button>
+
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+async function generateMD5() {
+    const text = document.getElementById("textInput").value;
+
+    const response = await fetch("http://localhost:3000/md5", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ text })
+    });
+
+    const data = await response.json();
+
+    if (data.md5) {
+        document.getElementById("result").innerText = "MD5: " + data.md5;
+    } else {
+        document.getElementById("result").innerText = "Error: " + data.error;
+    }
+}
+</script>
+
+</body>
+</html>
