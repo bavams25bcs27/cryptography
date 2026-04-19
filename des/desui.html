@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>DES Modes: CBC & ECB</title>
+<style>
+body { font-family: Arial; background:#f2f2f2; }
+.box{
+  background:#fff;
+  padding:20px;
+  border-radius:10px;
+  max-width:1000px;
+  margin:auto;
+}
+input, textarea {
+  width: 98%;
+  padding: 8px;
+  margin: 5px 0;
+}
+button {
+  padding: 8px 15px;
+  margin: 10px 5px;
+}
+pre{
+  background:#f7f7f7;
+  padding:10px;
+  border-radius:6px;
+  white-space:pre-wrap;
+  font-size:13px;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h2>DES Encryption & Decryption (CBC & ECB)</h2>
+
+Plaintext (Hex):
+<input id="plainText" value="0123456789ABCDEF1122334455667788">
+
+Key (16 Hex):
+<input id="desKey" value="AABB09182736CCDD">
+
+IV (16 Hex, used for CBC):
+<input id="iv" value="1234567890ABCDEF">
+
+<br>
+<button onclick="encryptDES('CBC')">Encrypt CBC</button>
+<button onclick="decryptDES('CBC')">Decrypt CBC</button>
+<br>
+<button onclick="encryptDES('ECB')">Encrypt ECB</button>
+<button onclick="decryptDES('ECB')">Decrypt ECB</button>
+
+
+<h3>Cipher Text:</h3>
+<textarea id="cipherText" rows="2"></textarea>
+
+<h3>Decrypted Text:</h3>
+<textarea id="decryptedText" rows="2"></textarea>
+
+<h3>Key Schedule (K1 – K16):</h3>
+<pre id="keyLog"></pre>
+
+<h3>Intermediate Steps:</h3>
+<pre id="log"></pre>
+
+</div>
+
+<script src="des.js"></script>
+</body>
+</html>
