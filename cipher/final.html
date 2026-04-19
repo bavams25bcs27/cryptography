@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cryptography Toolkit</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #0056b3;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+            margin-top: 20px;
+        }
+        .nav-links {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .nav-links a {
+            margin-right: 15px;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+            padding: 5px 0;
+            transition: color 0.3s ease;
+        }
+        .nav-links a:hover {
+            color: #0056b3;
+        }
+        .tool-section {
+            display: none; /* Hidden by default */
+            margin-bottom: 30px;
+            padding-top: 10px;
+        }
+        .tool-section.active {
+            display: block; /* Show active section */
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        textarea, input[type="text"], input[type="number"] {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            margin-top: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result-box {
+            background-color: #e9ecef;
+            padding: 15px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            min-height: 50px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            margin-top: 15px;
+        }
+        #keySquareDisplay {
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #ccc;
+            padding: 5px;
+            background-color: #fff;
+            width: fit-content;
+        }
+        #keySquareDisplay pre {
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cryptography Toolkit</h1>
+
+        <div class="nav-links">
+            <a href="#vigenere" onclick="showSection('vigenere')">Vigenere Cipher</a>
+            <a href="#affine" onclick="showSection('affine')">Affine Cipher</a>
+            <a href="#playfair" onclick="showSection('playfair')">Playfair Cipher</a>
+            <a href="#modInverse" onclick="showSection('modInverse')">Modular Multiplicative Inverse</a>
+            <a href="#extendedEuclidean" onclick="showSection('extendedEuclidean')">Extended Euclidean Algorithm</a>
+            <!-- Matrix tools can be added here later -->
+        </div>
+
+        <!-- Vigenere Cipher Section -->
+        <div id="vigenere" class="tool-section active">
+            <h2>Vigenere Cipher</h2>
+            <label for="vigenere_message">Message (English letters only):</label>
+            <textarea id="vigenere_message" rows="5" cols="70" placeholder="Enter your message here..."></textarea>
+
+            <label for="vigenere_key">Key (Space-separated numbers, e.g., 3 4 7 11 15):</label>
+            <input type="text" id="vigenere_key" placeholder="Enter your numeric key here...">
+
+            <button onclick="encryptVigenere()">Encrypt</button>
+            <button onclick="decryptVigenere()">Decrypt</button>
+
+            <h3>Result:</h3>
+            <div id="vigenere_result" class="result-box"></div>
+        </div>
+
+        <!-- Affine Cipher Section -->
+        <div id="affine" class="tool-section">
+            <h2>Affine Cipher</h2>
+            <label for="affine_message">Message (English letters only):</label>
+            <textarea id="affine_message" rows="5" cols="70" placeholder="Enter your message here..."></textarea>
+
+            <label for="affine_keyA">Key 'a' (Must be coprime to 26: 1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25):</label>            <input type="number" id="affine_keyA" placeholder="Enter key 'a' (e.g., 5)">
+
+            <label for="affine_keyB">Key 'b' (Any number from 0 to 25):</label>
+            <input type="number" id="affine_keyB" placeholder="Enter key 'b' (e.g., 8)">
+
+            <button onclick="encryptAffine()">Encrypt</button>
+            <button onclick="decryptAffine()">Decrypt</button>
+
+            <h3>Result:</h3>
+            <div id="affine_result" class="result-box"></div>
+        </div>
+
+        <!-- Playfair Cipher Section -->
+        <div id="playfair" class="tool-section">
+            <h2>Playfair Cipher</h2>
+            <label for="playfair_message">Message (English letters only):</label>
+            <textarea id="playfair_message" rows="5" cols="70" placeholder="Enter your message here..."></textarea>
+
+            <label for="playfair_key">Keyword (English letters only):</label>
+            <input type="text" id="playfair_key" placeholder="Enter your keyword here (e.g., KEYWORD)">
+
+            <button onclick="encryptPlayfair()">Encrypt</button>
+            <button onclick="decryptPlayfair()">Decrypt</button>
+
+            <h3>Key Square:</h3>
+            <div id="playfair_keySquareDisplay" class="result-box">
+                <pre>Key square will appear here.</pre>
+            </div>
+
+            <h3>Result:</h3>
+            <div id="playfair_result" class="result-box"></div>
+        </div>
+
+        <!-- Modular Multiplicative Inverse Section -->
+        <div id="modInverse" class="tool-section">
+            <h2>Modular Multiplicative Inverse</h2>
+            <label for="modInverse_num">Number (a):</label>
+            <input type="number" id="modInverse_num" placeholder="Enter number 'a'">
+
+            <label for="modInverse_mod">Modulus (m):</label>
+            <input type="number" id="modInverse_mod" placeholder="Enter modulus 'm'">
+
+            <button onclick="calculateModInverse()">Calculate Inverse</button>
+
+            <h3>Result:</h3>
+            <div id="modInverse_result" class="result-box"></div>
+        </div>
+
+        <!-- Extended Euclidean Algorithm Section -->
+        <div id="extendedEuclidean" class="tool-section">
+            <h2>Extended Euclidean Algorithm</h2>
+            <label for="eea_num1">Number 1 (a):</label>
+            <input type="number" id="eea_num1" placeholder="Enter number 'a'">
+
+            <label for="eea_num2">Number 2 (b):</label>
+            <input type="number" id="eea_num2" placeholder="Enter number 'b'">
+
+            <button onclick="calculateEEA()">Calculate GCD and Inverse</button>
+
+            <h3>Result and Intermediate Steps:</h3>
+            <div id="eea_result" class="result-box"></div>
+        </div>
+
+        <!-- Placeholder for Matrix Transpose and Determinant - Can be added later -->
+        <!-- <div id="matrixTranspose" class="tool-section"></div> -->
+        <!-- <div id="matrixDeterminant" class="tool-section"></div> -->
+
+    </div>
+
+    <script>
+        // --- Global Constants ---
+        const ALPHABET_SIZE = 26;
+        const ALPHABET_EN = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const ALPHABET_PLAYFAIR = "ABCDEFGHIKLMNOPQRSTUVWXYZ"; // J is omitted
+        const GRID_SIZE = 5;
+        const A_VALUES_COPRIME_TO_26 = [1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25];
+
+        // --- Utility Functions (Used by multiple ciphers/tools) ---
+
+        // Function to normalize message text: convert to uppercase, remove non-alphabetic
+        function normalizeMessage(text) {
+            return text.toUpperCase().replace(/[^A-Z]/g, '');
+        }
+
+        // Function to calculate Greatest Common Divisor (GCD)
+        function gcd(a, b) {
+            a = Math.abs(a);
+            b = Math.abs(b);
+            while (b) {
+                [a, b] = [b, a % b];
+            }
+            return a;
+        }
+
+        // Function to find modular multiplicative inverse of 'a' modulo 'm'
+        // Uses Extended Euclidean Algorithm logic
+        function modInverse(a, m) {
+            a = (a % m + m) % m; // Ensure 'a' is positive
+            for (let x = 1; x < m; x++) {
+                if (((a * x) % m) === 1) {
+                    return x;
+                }
+            }
+            return -1; // No inverse exists
+        }
+
+        // --- Navigation Logic ---
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.tool-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        // --- Vigenere Cipher Functions ---
+
+        // Function to parse the key: expecting space-separated numbers
+        function parseNumericKey(keyString) {
+            const keyArray = keyString.split(' ').filter(s => s.trim() !== '').map(Number);
+            if (keyArray.some(isNaN)) {
+                return []; // Return empty array if any part is not a number
+            }
+            return keyArray;
+        }
+
+        function vigenereEncrypt(message, keyString) {
+            let result = '';
+            let normalizedMessage = normalizeMessage(message);
+            let keyArray = parseNumericKey(keyString);
+
+            if (keyArray.length === 0) {
+                return '<span class="error-message">Error: Please provide a valid numeric key (space-separated numbers) for encryption.</span>';
+            }
+
+            let keyIndex = 0;
+
+            for (let i = 0; i < normalizedMessage.length; i++) {
+                let charCode = normalizedMessage.charCodeAt(i) - 65;
+                let shiftValue = keyArray[keyIndex % keyArray.length];
+                let encryptedCode = (charCode + shiftValue) % ALPHABET_SIZE;
+                result += String.fromCharCode(encryptedCode + 65);
+                keyIndex++;
+            }
+            return result;
+        }
+
+        function vigenereDecrypt(ciphertext, keyString) {
+            let result = '';
+            let normalizedCiphertext = normalizeMessage(ciphertext);
+            let keyArray = parseNumericKey(keyString);
+
+            if (keyArray.length === 0) {
+                return '<span class="error-message">Error: Please provide a valid numeric key (space-separated numbers) for decryption.</span>';
+            }
+
+            let keyIndex = 0;
+
+            for (let i = 0; i < normalizedCiphertext.length; i++) {
+                let charCode = normalizedCiphertext.charCodeAt(i) - 65;
+                let shiftValue = keyArray[keyIndex % keyArray.length];
+                let decryptedCode = (charCode - shiftValue + ALPHABET_SIZE) % ALPHABET_SIZE;
+                result += String.fromCharCode(decryptedCode + 65);
+                keyIndex++;
+            }
+            return result;
+        }
+
+        function encryptVigenere() {
+            const messageInput = document.getElementById('vigenere_message').value;
+            const keyInput = document.getElementById('vigenere_key').value;
+            const resultElement = document.getElementById('vigenere_result');
+
+            if (!messageInput) {
+                resultElement.innerHTML = '<span class="error-message">Error: Please enter a message to encrypt.</span>';
+                return;
+            }
+            resultElement.innerHTML = vigenereEncrypt(messageInput, keyInput);
+        }
+
+        function decryptVigenere() {
+            const ciphertextInput = document.getElementById('vigenere_message').value;
+            const keyInput = document.getElementById('vigenere_key').value;
+            const resultElement = document.getElementById('vigenere_result');
+
+            if (!ciphertextInput) {
+                resultElement.innerHTML = '<span class="error-message">Error: Please enter a message to decrypt.</span>';
+                return;
+            }
+            resultElement.innerHTML = vigenereDecrypt(ciphertextInput, keyInput);
+        }
+
+        // --- Affine Cipher Functions ---
+
+        function affineEncrypt(message, keyA, keyB) {
+            let result = '';
+            let normalizedMessage = normalizeMessage(message);
+
+            if (!A_VALUES_COPRIME_TO_26.includes(keyA)) {
+                return `<span class="error-message">Error: Key 'a' (${keyA}) must be coprime to ${ALPHABET_SIZE}. Valid values are: ${A_VALUES_COPRIME_TO_26.join(', ')}.</span>`;
+            }
+            if (keyB < 0 || keyB >= ALPHABET_SIZE) {
+                return `<span class="error-message">Error: Key 'b' (${keyB}) must be between 0 and ${ALPHABET_SIZE - 1}.</span>`;
+            }
+
+            for (let i = 0; i < normalizedMessage.length; i++) {
+                let charCode = normalizedMessage.charCodeAt(i) - 65;
+                let encryptedCode = (keyA * charCode + keyB) % ALPHABET_SIZE;
+                result += String.fromCharCode(encryptedCode + 65);
+            }
+            return result;
+        }
+
+        function affineDecrypt(ciphertext, keyA, keyB) {
+            let result = '';
+            let normalizedCiphertext = normalizeMessage(ciphertext);
+
+            if (!A_VALUES_COPRIME_TO_26.includes(keyA)) {
+                return `<span class="error-message">Error: Key 'a' (${keyA}) must be coprime to ${ALPHABET_SIZE}. Valid values are: ${A_VALUES_COPRIME_TO_26.join(', ')}.</span>`;
+            }
+            if (keyB < 0 || keyB >= ALPHABET_SIZE) {
+                return `<span class="error-message">Error: Key 'b' (${keyB}) must be between 0 and ${ALPHABET_SIZE - 1}.</span>`;
+            }
+
+            const a_inverse = modInverse(keyA, ALPHABET_SIZE);
+            if (a_inverse === -1) {
+                return `<span class="error-message">Error: Could not find modular inverse for key 'a' (${keyA}). This indicates 'a' is not coprime to ${ALPHABET_SIZE}. Please choose a valid 'a'.</span>`;
+            }
+
+            for (let i = 0; i < normalizedCiphertext.length; i++) {
+                let charCode = normalizedCiphertext.charCodeAt(i) - 65;
+                let decryptedCode = (a_inverse * (charCode - keyB + ALPHABET_SIZE)) % ALPHABET_SIZE;
+                result += String.fromCharCode(decryptedCode + 65);
+            }
+            return result;
+        }
+
+        function encryptAffine() {
+            const messageInput = document.getElementById('affine_message').value;
+            const keyA = parseInt(document.getElementById('affine_keyA').value, 10);
+            const keyB = parseInt(document.getElementById('affine_keyB').value, 10);
+            const resultElement = document.getElementById('affine_result');
+
+            if (!messageInput) {
+                resultElement.innerHTML = '<span class="error-message">Error: Please enter a message to encrypt.</span>';
+                return;
+            }
+            if (isNaN(keyA) || isNaN(keyB)) {
+                resultElement.innerHTML = '<span class="error-message">Error: Please enter valid numbers for both Key \'a\' and Key \'b\'.</span>';
+                return;
+            }
+            resultElement.innerHTML = affineEncrypt(messageInput, keyA, keyB);
+        }
+
+        function decryptAffine() {
+            const ciphertextInput = document.getElementById('affine_message').value;
+            const keyA = parseInt(document.getElementById('affine_keyA').value, 10);
+            const keyB = parseInt(document.getElementById('affine_keyB').value, 10);
+            const resultElement = document.getElementById('affine_result');
+
+            if (!ciphertextInput) {
+                resultElement.innerHTML = '<span class="error-message">Error: Please enter a message to decrypt.</span>';
+                return;
+            }
+            if (isNaN(keyA) || isNaN(keyB)) {
+                resultElement.innerHTML = '<span class="error-message">Error: Please enter valid numbers for both Key \'a\' and Key \'b\'.</span>';
+                return;
+            }
+            resultElement.innerHTML = affineDecrypt(ciphertextInput, keyA, keyB);
+        }
+
+        // --- Playfair Cipher Functions ---
+
+        // Function to build the 5x5 Playfair key square
+        function buildKeySquare(keyword) {
+            let keySquare = [];
+            let usedLetters = new Set();
+            let uniqueKey = normalizeMessage(keyword); // Normalize and remove J (done in normalizeMessage)
+
+            // Add unique letters from the keyword
+            for (let char of uniqueKey) {
+                if (!usedLetters.has(char)) {
+                    keySquare.push(char);
+                    usedLetters.add(char);
+                }
+            }
+
+            // Fill the rest with the alphabet (excluding J)
+            for (let char of ALPHABET_PLAYFAIR) {
+                if (!usedLetters.has(char)) {
+                    keySquare.push(char);
+                    usedLetters.add(char);
+                }
+            }
+
+            // Reshape into a 5x5 grid
+            const grid = [];
+            for (let i = 0; i < GRID_SIZE; i++) {
+                grid.push(keySquare.slice(i * GRID_SIZE, (i + 1) * GRID_SIZE));
+            }
+            return grid;
+        }
+
+        // Function to find the coordinates [row, col] of a letter in the key square
+        function findCharCoords(char, keySquare) {
+            for (let r = 0; r < GRID_SIZE; r++) {
+                for (let c = 0; c < GRID_SIZE; c++) {
+                    if (keySquare[r][c] === char) {
+                        return [r, c];
+                    }
+                }
+            }
+            return null;
+        }
+
+        // Preprocess plaintext into digraphs
+        function preprocessPlayfairPlaintext(plaintext) {
+            let processedText = '';
+            for (let i = 0; i < plaintext.length; i++) {
+                processedText += plaintext[i];
+                if (i + 1 < plaintext.length) {
+                    if (plaintext[i] === plaintext[i+1]) {
+                        processedText += 'X'; // Insert filler if duplicate consecutive letters
+                    }
+                }
+            }
+            if (processedText.length % 2 !== 0) {
+                processedText += 'X'; // Pad if odd length
+            }
+            return processedText;
+        }
+
+        // Playfair Cipher Logic (encrypt/decrypt)
+        function playfairCipher(message, keySquare, mode = 'encrypt') {
+            let result = '';
+            let processedMessage = (mode === 'encrypt') ? preprocessPlayfairPlaintext(message) : message;
+
+            for (let i = 0; i < processedMessage.length; i += 2) {
+                let char1 = processedMessage[i];
+                let char2 = processedMessage[i+1];
+
+                let [r1, c1] = findCharCoords(char1, keySquare);
+                let [r2, c2] = findCharCoords(char2, keySquare);
+
+                let newChar1, newChar2;
+
+                if (r1 === r2) { // Same row
+                    newChar1 = keySquare[r1][(c1 + (mode === 'encrypt' ? 1 : GRID_SIZE - 1)) % GRID_SIZE];
+                    newChar2 = keySquare[r2][(c2 + (mode === 'encrypt' ? 1 : GRID_SIZE - 1)) % GRID_SIZE];
+                } else if (c1 === c2) { // Same column
+                    newChar1 = keySquare[(r1 + (mode === 'encrypt' ? 1 : GRID_SIZE - 1)) % GRID_SIZE][c1];
+                    newChar2 = keySquare[(r2 + (mode === 'encrypt' ? 1 : GRID_SIZE - 1)) % GRID_SIZE][c2];
+                } else { // Different row and column (rectangle rule)
+                    newChar1 = keySquare[r1][c2];
+                    newChar2 = keySquare[r2][c1];
+                }
+                result += newChar1 + newChar2;
+            }
+            return result;
+        }
+
+        // Function to display the key square
+        function displayPlayfairKeySquare(keySquare) {
+            let display = '';
+            for (let r = 0; r < GRID_SIZE; r++) {
+                display += keySquare[r].join(' ') + '\n';
+            }
+            document.getElementById('playfair_keySquareDisplay').innerHTML = `<pre>${display}</pre>`;
+        }
+
+
+        function encryptPlayfair() {
+            const messageInput = document.getElementById('playfair_message').value;
+            const keyInput = document.getElementById('playfair_key').value;
+            const resultElement = document.getElementById('playfair_result');
+            const keySquareDisplayElement = document.getElementById('playfair_keySquareDisplay');
+
+            if (!messageInput) {
+                resultElement.innerHTML = '<span class="error-message">Error: Please enter a message to encrypt.</span>';
+                keySquareDisplayElement.innerHTML = '<pre>Key square will appear here.</pre>';
+                return;
+            }
+            if (!keyInput) {
+                resultElement.innerHTML = '<span class="error-message">Error: Please enter a keyword for the Playfair cipher.</span>';
+                keySquareDisplayElement.innerHTML = '<pre>Key square will appear here.</pre>';
+                return;
+            }
+
+            const normalizedMessage = normalizeMessage(messageInput);
+            if (normalizedMessage.length === 0) {
+                 resultElement.innerHTML = '<span class="error-message">Error: Message must contain English letters for Playfair cipher.</span>';
+                 keySquareDisplayElement.innerHTML = '<pre>Key square will appear here.</pre>';
+                 return;
+            }
+
+            const keySquare = buildKeySquare(keyInput);
+            displayPlayfairKeySquare(keySquare);
+
+            const encryptedMessage = playfairCipher(normalizedMessage, keySquare, 'encrypt');
+            resultElement.innerText = encryptedMessage;
+        }
+
+        function decryptPlayfair() {
+            const ciphertextInput = document.getElementById('playfair_message').value;
+            const keyInput = document.getElementById('playfair_key').value;
+            const resultElement = document.getElementById('playfair_result');
+            const keySquareDisplayElement = document.getElementById('playfair_keySquareDisplay');
+
+
+            if (!ciphertextInput) {
+                resultElement.innerHTML = '<span class="error-message">Error: Please enter a ciphertext to decrypt.</span>';
+                keySquareDisplayElement.innerHTML = '<pre>Key square will appear here.</pre>';
+                return;
+            }
+            if (!keyInput) {
+                resultElement.innerHTML = '<span class="error-message">Error: Please enter a keyword for the Playfair cipher.</span>';
+                keySquareDisplayElement.innerHTML = '<pre>Key square will appear here.</pre>';
+                return;
+            }
+
+            const normalizedCiphertext = normalizeMessage(ciphertextInput);
+            if (normalizedCiphertext.length === 0 || normalizedCiphertext.length % 2 !== 0) {
+                 resultElement.innerHTML = '<span class="error-message">Error: Ciphertext must contain an even number of English letters for Playfair decryption.</span>';
+                 keySquareDisplayElement.innerHTML = '<pre>Key square will appear here.</pre>';
+                 return;
+            }
+
+            const keySquare = buildKeySquare(keyInput);
+            displayPlayfairKeySquare(keySquare);
+
+            const decryptedMessage = playfairCipher(normalizedCiphertext, keySquare, 'decrypt');
+            resultElement.innerText = decryptedMessage;
+        }
+
+        // --- Modular Multiplicative Inverse Functions ---
+
+        function calculateModInverse() {
+            const num = parseInt(document.getElementById('modInverse_num').value, 10);
+            const mod = parseInt(document.getElementById('modInverse_mod').value, 10);
+            const resultElement = document.getElementById('modInverse_result');
+
+            if (isNaN(num) || isNaN(mod)) {
+                resultElement.innerHTML = '<span class="error-message">Error: Please enter valid numbers for both "a" and "m".</span>';
+                return;
+            }
+            if (mod <= 1) {
+                resultElement.innerHTML = '<span class="error-message">Error: Modulus "m" must be greater than 1.</span>';
+                return;
+            }
+            if (gcd(num, mod) !== 1) {
+                resultElement.innerHTML = `<span class="error-message">Error: ${num} and ${mod} are not coprime. No modular multiplicative inverse exists. GCD(${num}, ${mod}) = ${gcd(num,mod)}.</span>`;
+                return;
+            }
+
+            const inverse = modInverse(num, mod);
+            if (inverse !== -1) {
+                resultElement.innerText = `The modular multiplicative inverse of ${num} mod ${mod} is: ${inverse}`;
+            } else {
+                resultElement.innerHTML = `<span class="error-message">Error: An unexpected error occurred. No inverse found.</span>`;
+            }
+        }
+
+        // --- Extended Euclidean Algorithm Functions ---
+
+        // Extended Euclidean Algorithm with intermediate steps
+        function extendedEuclideanAlgorithm(a, b) {
+            let steps = [];
+            let r0 = a, r1 = b;
+            let s0 = 1, s1 = 0;
+            let t0 = 0, t1 = 1;
+
+            steps.push(`Applying Extended Euclidean Algorithm to find GCD(${a}, ${b}) and coefficients x, y such that ax + by = GCD.`);
+            steps.push(`Initial values: r0=${r0}, r1=${r1}, s0=${s0}, s1=${s1}, t0=${t0}, t1=${t1}\n`);
+
+            let i = 0;
+            while (r1 !== 0) {
+                i++;
+                let q = Math.floor(r0 / r1);
+
+                let r2 = r0 - q * r1;
+                let s2 = s0 - q * s1;
+                let t2 = t0 - q * t1;
+
+                steps.push(`Step ${i}:`);
+                steps.push(`q = floor(${r0} / ${r1}) = ${q}`);
+                steps.push(`r${i+1} = ${r0} - ${q} * ${r1} = ${r2}`);
+                steps.push(`s${i+1} = ${s0} - ${q} * ${s1} = ${s2}`);
+                steps.push(`t${i+1} = ${t0} - ${q} * ${t1} = ${t2}\n`);
+
+                r0 = r1; r1 = r2;
+                s0 = s1; s1 = s2;
+                t0 = t1; t1 = t2;
+            }
+
+            steps.push(`Final step: r1 is 0. GCD(${a}, ${b}) = ${r0}`);
+            steps.push(`Coefficients: x = s0 = ${s0}, y = t0 = ${t0}`);
+            steps.push(`Verification: (${a} * ${s0}) + (${b} * ${t0}) = ${a * s0 + b * t0} (should be equal to GCD)`);
+
+            return {
+                gcd: r0,
+                x: s0,
+                y: t0,
+                steps: steps.join('\n')
+            };
+        }
+
+        function calculateEEA() {
+            const num1 = parseInt(document.getElementById('eea_num1').value, 10);
+            const num2 = parseInt(document.getElementById('eea_num2').value, 10);
+            const resultElement = document.getElementById('eea_result');
+
+            if (isNaN(num1) || isNaN(num2)) {
+                resultElement.innerHTML = '<span class="error-message">Error: Please enter valid numbers for both "a" and "b".</span>';
+                return;
+            }
+            if (num1 === 0 && num2 === 0) {
+                 resultElement.innerHTML = '<span class="error-message">Error: Both numbers cannot be zero.</span>';
+                 return;
+            }
+
+            const eeaResult = extendedEuclideanAlgorithm(num1, num2);
+            resultElement.innerText = eeaResult.steps;
+        }
+
+
+        // --- Initialize: Show the first section on page load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('vigenere');
+        });
+    </script>
+</body>
+</html>
